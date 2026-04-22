@@ -19,6 +19,7 @@ let petEating = 0;      // frames of eating animation
 let animRafId = null;
 let unsubscribeRoom = null;
 let prevHealth = 0;
+let celebrationShown = false;
 
 const SCENE_W = () => sceneCanvas.clientWidth  || 700;
 const SCENE_H = () => sceneCanvas.clientHeight || 400;
@@ -335,9 +336,10 @@ function updateFedList(room) {
 
 // ── Check all fed ─────────────────────────────────────────────────────────────
 function checkAllFed(room) {
-  if (!room) return;
+  if (!room || celebrationShown) return;
   const treats = Object.values(room.treats || {});
   if (treats.length > 0 && treats.every(t => t.fed)) {
+    celebrationShown = true;
     setTimeout(showCelebration, 600);
   }
 }
@@ -351,9 +353,12 @@ function showCelebration() {
   celebration.classList.remove('hidden');
 }
 
-function closeCelebration() {
+async function closeCelebration() {
   celebration.classList.add('hidden');
-  DB.closeFeedingRoom(getProjectId());
+  cancelAnimationFrame(animRafId);
+  if (unsubscribeRoom) { unsubscribeRoom(); unsubscribeRoom = null; }
+  await DB.closeFeedingRoom(getProjectId());
+  window.close();
 }
 
 // ── Health bar ────────────────────────────────────────────────────────────────

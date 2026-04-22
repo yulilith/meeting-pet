@@ -73,7 +73,7 @@ function bindNavigation() {
   });
 
   document.getElementById('btn-start-meeting').addEventListener('click', startMeeting);
-  // btn-analyze uses inline onclick in HTML — no listener needed here
+  document.getElementById('btn-analyze').addEventListener('click', analyzeTranscript);
 }
 
 // ── Pet grid ──────────────────────────────────────────────────────────────────
